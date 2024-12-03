@@ -25,6 +25,13 @@ public class AuthenticationService {
 
 
     public AuthenticationResponse register(RegisterRequest request) {
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return AuthenticationResponse.builder()
+                    .message("User with email already exist")
+                    .build();
+        }
+
         var user = com.projectmanagement.tuts.Entity.User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
