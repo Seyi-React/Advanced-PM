@@ -6,6 +6,7 @@ import com.projectmanagement.tuts.DTO.RegisterRequest;
 import com.projectmanagement.tuts.Entity.Role;
 import com.projectmanagement.tuts.config.JwtService;
 import com.projectmanagement.tuts.exception.AuthenticationException;
+import com.projectmanagement.tuts.exception.UserAlreadyExistsException;
 import com.projectmanagement.tuts.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,9 +28,7 @@ public class AuthenticationService {
     public AuthenticationResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            return AuthenticationResponse.builder()
-                    .message("User with email already exist")
-                    .build();
+             throw new UserAlreadyExistsException("User with email " + request.getEmail() + " already exists");
         }
 
         var user = com.projectmanagement.tuts.Entity.User.builder()

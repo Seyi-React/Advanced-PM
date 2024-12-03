@@ -4,6 +4,7 @@ import com.projectmanagement.tuts.DTO.AuthenticationRequest;
 import com.projectmanagement.tuts.DTO.AuthenticationResponse;
 import com.projectmanagement.tuts.DTO.RegisterRequest;
 import com.projectmanagement.tuts.exception.AuthenticationException;
+import com.projectmanagement.tuts.exception.UserAlreadyExistsException;
 import com.projectmanagement.tuts.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +30,13 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
-
         try {
             AuthenticationResponse response = authenticationService.register(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (UserAlreadyExistsException e) {
+            // Specific handling for existing user
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "User already exists", "details", e.getMessage()));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "Registration failed", "details", e.getMessage()));
