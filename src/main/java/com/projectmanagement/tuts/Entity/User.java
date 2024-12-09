@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+//import org.springframework.scheduling.config.Task;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,6 +35,14 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    // One-to-Many relationship with Project
+    @OneToMany(mappedBy = "projectLeader", cascade = CascadeType.ALL)
+    private List<Project> leadingProjects = new ArrayList<>();
+
+    // One-to-Many relationship with Task
+    @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL)
+    private List<Task> assignedTasks = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
