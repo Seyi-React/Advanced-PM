@@ -1,7 +1,10 @@
 package com.projectmanagement.tuts.Entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
+
+@Entity
 public class Task {
 
    @Id
