@@ -10,12 +10,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
-public class ProjectServiceImpl implements  ProjectService{
+public class ProjectServiceImpl implements  ProjectService {
 
     private final UserRepository userRepository;
 
@@ -24,9 +26,9 @@ public class ProjectServiceImpl implements  ProjectService{
 
     @Override
     public Project createProject(ProjectRequest projectRequest, String userEmail) throws Exception {
-      Optional<User>  projectLeader = userRepository.findByEmail(userEmail);
-        try{
-            if(projectLeader.isEmpty()) {
+        Optional<User> projectLeader = userRepository.findByEmail(userEmail);
+        try {
+            if (projectLeader.isEmpty()) {
                 throw new UserEmailNotFoundException("User not found");
             }
 
@@ -44,4 +46,24 @@ public class ProjectServiceImpl implements  ProjectService{
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public List<Project> getUserProjects(String userEmail) throws Exception {
+        Optional<User> getUser = userRepository.findByEmail(userEmail);
+        try {
+            if (getUser.isEmpty()) {
+                throw new UserEmailNotFoundException("User not found");
+            }
+
+            projectRepository.findByProjectLeader_Id(user.getId())
+                    .stream()
+                    .map(this::convertToResponse)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return List.of();
+    }
+
 }
