@@ -7,7 +7,6 @@ import com.projectmanagement.tuts.exception.UserEmailNotFoundException;
 import com.projectmanagement.tuts.repository.ProjectRepository;
 import com.projectmanagement.tuts.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -55,10 +54,7 @@ public class ProjectServiceImpl implements  ProjectService {
                 throw new UserEmailNotFoundException("User not found");
             }
 
-            projectRepository.findByProjectLeader_Id(user.getId())
-                    .stream()
-                    .map(this::convertToResponse)
-                    .collect(Collectors.toList());
+//            projectRepository.findByProjectLeader_Id(u);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

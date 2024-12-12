@@ -6,6 +6,8 @@ import com.projectmanagement.tuts.DTO.RegisterRequest;
 import com.projectmanagement.tuts.exception.AuthenticationException;
 import com.projectmanagement.tuts.exception.UserAlreadyExistsException;
 import com.projectmanagement.tuts.service.AuthenticationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "User Management", description = "")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -29,6 +32,7 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
+
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         try {
             AuthenticationResponse response = authenticationService.register(request);
@@ -45,7 +49,8 @@ public class AuthenticationController {
                     .body(Map.of("error", "Unexpected error occurred", "details", e.getMessage()));
         }
     }
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
+
     public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest request) {
         try {
             AuthenticationResponse response = authenticationService.authenticate(request);
