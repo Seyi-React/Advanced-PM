@@ -10,56 +10,40 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
-public class ProjectServiceImpl implements  ProjectService {
-
+public class ProjectServiceImpl implements ProjectService {
     private final UserRepository userRepository;
-
     private final ProjectRepository projectRepository;
-
 
     @Override
     public Project createProject(ProjectRequest projectRequest, String userEmail) throws Exception {
-        Optional<User> projectLeader = userRepository.findByEmail(userEmail);
-        try {
-            if (projectLeader.isEmpty()) {
-                throw new UserEmailNotFoundException("User not found");
-            }
+        User projectLeader = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserEmailNotFoundException("User not found"));
 
-            Project project = Project.builder()
-                    .description(projectRequest.getDescription())
-                    .name(projectRequest.getName())
-                    .endDate(projectRequest.getEndDate())
-                    .status(projectRequest.getStatus())
-                    .startDate(projectRequest.getStartDate())
-                    .projectLeader(projectLeader.get())
-                    .build();
+        Project project = Project.builder()
+                .description(projectRequest.getDescription())
+                .name(projectRequest.getName())
+                .endDate(projectRequest.getEndDate())
+                .status(projectRequest.getStatus())
+                .startDate(projectRequest.getStartDate())
+                .projectLeader(projectLeader)
+                .build();
 
-            return projectRepository.save(project);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
+        // Ensure bidirectional relationship is maintained
+        projectLeader.getLeadingProjects().add(project);
+
+        return projectRepository.save(project);
     }
 
     @Override
     public List<Project> getUserProjects(String userEmail) throws Exception {
-        Optional<User> getUser = userRepository.findByEmail(userEmail);
-        try {
-            if (getUser.isEmpty()) {
-                throw new UserEmailNotFoundException("User not found");
-            }
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserEmailNotFoundException("User not found"));
 
-//            projectRepository.findByProjectLeader_Id(u);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return List.of();
+        // Fetch projects for the user
+        return projectRepository.findByProjectLeader(user);
     }
-
 }

@@ -30,7 +30,7 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Project Management API")
                         .version("1.0")
-                        .description("API documentation for your  Advanced PM"));
+                        .description("API documentation"));
     }
 
     @Bean

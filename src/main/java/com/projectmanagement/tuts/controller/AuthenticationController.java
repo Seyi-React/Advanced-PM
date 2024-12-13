@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Tag(name = "User Management", description = "")
+@Tag(name = "User Management")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
