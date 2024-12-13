@@ -8,6 +8,6 @@ import java.util.List;
 
 @Component
 public interface TaskService {
-    Task createTask(TaskRequest taskRequest, String userEmail) throws Exception;
-    List<Task> getAllTasks(Long projectId) throws Exception;
+    Task createTask(TaskRequest taskRequest, Long id) throws Exception;
+    List<Task> getProjectTasks(Long projectId) throws Exception;
 }
