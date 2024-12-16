@@ -3,6 +3,7 @@ package com.projectmanagement.tuts.service;
 import com.projectmanagement.tuts.DTO.ProjectRequest;
 import com.projectmanagement.tuts.Entity.Project;
 import com.projectmanagement.tuts.Entity.User;
+import com.projectmanagement.tuts.exception.ProjectNotFoundException;
 import com.projectmanagement.tuts.exception.UserEmailNotFoundException;
 import com.projectmanagement.tuts.repository.ProjectRepository;
 import com.projectmanagement.tuts.repository.UserRepository;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -43,7 +45,13 @@ public class ProjectServiceImpl implements ProjectService {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserEmailNotFoundException("User not found"));
 
-        // Fetch projects for the user
+
         return projectRepository.findByProjectLeader(user);
+    }
+
+    @Override
+    public Project getProjectById(Long projectId) throws Exception {
+        return projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Project with ID " + projectId + " not found"));
     }
 }

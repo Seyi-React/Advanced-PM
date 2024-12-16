@@ -38,11 +38,12 @@ public class User implements UserDetails {
     private Role role;
 
     // One-to-Many relationship with Project
-    @OneToMany(mappedBy = "projectLeader", cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "projectLeader")
     private List<Project> leadingProjects = new ArrayList<>();
 
     // One-to-Many relationship with Task
-    @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "assignedTo")
     private List<Task> assignedTasks = new ArrayList<>();
 
     @JsonIgnore

@@ -2,6 +2,7 @@ package com.projectmanagement.tuts.controller;
 
 import com.projectmanagement.tuts.DTO.ProjectRequest;
 import com.projectmanagement.tuts.Entity.Project;
+import com.projectmanagement.tuts.exception.ProjectNotFoundException;
 import com.projectmanagement.tuts.service.ProjectService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/projects")
@@ -23,7 +25,7 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @PostMapping
+    @PostMapping("CreateProject")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Project> createProject(
             @Valid @RequestBody ProjectRequest request,
@@ -40,5 +42,26 @@ public class ProjectController {
     ) throws Exception {
         List<Project> projects = projectService.getUserProjects(userDetails.getUsername());
         return ResponseEntity.ok(projects);
+    }
+
+    @GetMapping("/{GetProjectId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getProjectById(@PathVariable("GetProjectId") Long projectId) {
+        try {
+            Project projectID = projectService.getProjectById(projectId);
+            return ResponseEntity.ok(projectID);
+        } catch (ProjectNotFoundException e) {
+            Map<String, String> errorResponse = Map.of(
+                    "error", "Project Id not found",
+                    "details", e.getMessage()
+            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, String> errorResponse = Map.of(
+                    "error", "An unexpected error occurred",
+                    "details", e.getMessage()
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 }

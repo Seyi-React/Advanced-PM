@@ -31,7 +31,7 @@ public class Project {
     private User projectLeader;
 
     // One-to-Many relationship with Task
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     private List<Task> tasks = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
