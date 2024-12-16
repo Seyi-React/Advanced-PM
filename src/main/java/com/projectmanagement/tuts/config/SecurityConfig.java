@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) ->
-                                response.sendError(HttpServletResponse.SC_EXPECTATION_FAILED))
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
                 );
 
         return http.build();

@@ -1,6 +1,7 @@
 package com.projectmanagement.tuts.controller;
 
 import com.projectmanagement.tuts.DTO.ProjectRequest;
+import com.projectmanagement.tuts.DTO.ProjectUpdateDTO;
 import com.projectmanagement.tuts.Entity.Project;
 import com.projectmanagement.tuts.exception.ProjectNotFoundException;
 import com.projectmanagement.tuts.service.ProjectService;
@@ -35,7 +36,7 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(project);
     }
 
-    @GetMapping("/GetAllProjects")
+    @GetMapping("/GetUserProjects")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Project>> getUserProjects(
             @AuthenticationPrincipal UserDetails userDetails
@@ -59,6 +60,54 @@ public class ProjectController {
         } catch (Exception e) {
             Map<String, String> errorResponse = Map.of(
                     "error", "An unexpected error occurred",
+                    "details", e.getMessage()
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PutMapping("/{projectId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> updateProject(
+            @PathVariable Long projectId,
+              @Valid   @RequestBody ProjectUpdateDTO projectDetails
+    ) {
+        try {
+            ProjectUpdateDTO updatedProject = projectService.updateProject(projectId, projectDetails);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
+        } catch (ProjectNotFoundException e) {
+            Map<String, String> errorResponse = Map.of(
+                    "error", "Project not found",
+                    "details", e.getMessage()
+            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, String> errorResponse = Map.of(
+                    "error", "Error updating project",
+                    "details", e.getMessage()
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @DeleteMapping("/{projectId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> deleteProject(@PathVariable Long projectId) {
+        try {
+            projectService.deleteProject(projectId);
+            return ResponseEntity.ok(Map.of(
+                    "message", "Project successfully deleted",
+                    "projectId", projectId
+            ));
+        } catch (ProjectNotFoundException e) {
+            Map<String, String> errorResponse = Map.of(
+                    "error", "Project not found",
+                    "details", e.getMessage()
+            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e) {
+            Map<String, String> errorResponse = Map.of(
+                    "error", "Error deleting project",
                     "details", e.getMessage()
             );
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);

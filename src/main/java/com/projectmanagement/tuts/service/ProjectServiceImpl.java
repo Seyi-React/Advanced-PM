@@ -1,6 +1,7 @@
 package com.projectmanagement.tuts.service;
 
 import com.projectmanagement.tuts.DTO.ProjectRequest;
+import com.projectmanagement.tuts.DTO.ProjectUpdateDTO;
 import com.projectmanagement.tuts.Entity.Project;
 import com.projectmanagement.tuts.Entity.User;
 import com.projectmanagement.tuts.exception.ProjectNotFoundException;
@@ -11,12 +12,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
+
+
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
 
@@ -53,5 +55,34 @@ public class ProjectServiceImpl implements ProjectService {
     public Project getProjectById(Long projectId) throws Exception {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Project with ID " + projectId + " not found"));
+    }
+
+    @Override
+    public ProjectUpdateDTO updateProject(Long projectId, ProjectUpdateDTO projectDetails) throws Exception {
+        // Find the existing project
+        Project existingProject = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Project with ID " + projectId + " not found"));
+
+        // Update the existing project
+        existingProject.setName(projectDetails.getName());
+        existingProject.setDescription(projectDetails.getDescription());
+
+        // Save the updated project
+        Project savedProject = projectRepository.save(existingProject);
+
+        // Convert the saved project back to DTO
+        return ProjectUpdateDTO.builder()
+                .name(savedProject.getName())
+                .description(savedProject.getDescription())
+                .build();
+    }
+
+
+    @Override
+    public void deleteProject(Long projectId) throws Exception {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Project with ID " + projectId + " not found"));
+
+        projectRepository.delete(project);
     }
 }
