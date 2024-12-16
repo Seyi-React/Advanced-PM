@@ -45,4 +45,14 @@ public class TaskServiceImpl implements TaskService{
 
         return taskRepository.findByProject(project);
     }
+
+    @Override
+    public Task getTaskById(Long taskId) throws Exception {
+    return  taskRepository.findById(taskId)
+                .orElseThrow(() -> new ProjectNotFoundException("Task not found"));
+
+
+    }
+
+
 }

@@ -10,4 +10,5 @@ import java.util.List;
 public interface TaskService {
     Task createTask(TaskRequest taskRequest, Long id) throws Exception;
     List<Task> getProjectTasks(Long projectId) throws Exception;
+    Task getTaskById(Long taskId) throws Exception;
 }
