@@ -1,6 +1,7 @@
 package com.projectmanagement.tuts.controller;
 
 
+import com.projectmanagement.tuts.DTO.TaskCreationDTO;
 import com.projectmanagement.tuts.DTO.TaskRequest;
 import com.projectmanagement.tuts.Entity.Task;
 import com.projectmanagement.tuts.exception.ProjectNotFoundException;
@@ -26,7 +27,7 @@ public class TaskController {
 
     @PostMapping("CreateTasks/{projectId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Task> createTask (@Valid @RequestBody TaskRequest taskRequest, @PathVariable Long projectId) throws  Exception {
+    public ResponseEntity<?> createTask (@Valid @RequestBody TaskCreationDTO taskRequest, @PathVariable Long projectId) throws  Exception {
 
         try {
             Task createdtask = taskService.createTask(taskRequest, projectId);
@@ -54,7 +55,7 @@ public class TaskController {
         }
     }
 
-    @GetMapping("taskId")
+    @GetMapping("{taskId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Task> getTaskById(Long taskId) {
         try{
@@ -66,6 +67,17 @@ public class TaskController {
         }
 
         }
+
+    @DeleteMapping("{taskId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> DeleteTaskById( @PathVariable  Long taskId) {
+        try{
+           taskService.deleteTask(taskId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
     }
 
 
