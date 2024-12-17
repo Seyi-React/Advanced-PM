@@ -5,6 +5,7 @@ import com.projectmanagement.tuts.DTO.TaskCreationDTO;
 import com.projectmanagement.tuts.Entity.Project;
 import com.projectmanagement.tuts.Entity.Task;
 import com.projectmanagement.tuts.exception.ProjectNotFoundException;
+import com.projectmanagement.tuts.exception.TaskNotFoundException;
 import com.projectmanagement.tuts.repository.ProjectRepository;
 import com.projectmanagement.tuts.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,31 +56,27 @@ public class TaskServiceImpl implements TaskService{
 
     @Override
     public void deleteTask(Long taskId) throws Exception {
-        Task taskID = taskRepository.findById(taskId)
-                .orElseThrow(() -> new ProjectNotFoundException("Task with ID " + taskId + " not found"));
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException("Task with ID " + taskId + " not found"));
 
-        taskRepository.delete(taskID);
+        taskRepository.delete(task);
     }
 
-
     @Override
-    public Task updateProject(Long projectId, TaskCreationDTO projectDetails) throws Exception {
-        // Find the existing project
-        Task existingTask = taskRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException("Project with ID " + projectId + " not found"));
+    public Task updateTask(Long taskId, TaskCreationDTO taskDetails) throws Exception {
+        // Find the existing task
+        Task existingTask = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException("Task with ID " + taskId + " not found"));
 
-        // Update the existing project
-        existingTask.setTitle(projectDetails.getTitle());
-        existingTask.setDescription(projectDetails.getDescription());
-        existingTask.setStatus(projectDetails.getStatus());
-        existingTask.setPriority(projectDetails.getPriority());
-        existingTask.setDueDate(projectDetails.getDueDate());
+        // Update the existing task
+        existingTask.setTitle(taskDetails.getTitle());
+        existingTask.setDescription(taskDetails.getDescription());
+        existingTask.setStatus(taskDetails.getStatus());
+        existingTask.setPriority(taskDetails.getPriority());
+        existingTask.setDueDate(taskDetails.getDueDate());
 
-        // Save the updated project
-       return taskRepository.save(existingTask);
-
-
-
+        // Save the updated task
+        return taskRepository.save(existingTask);
     }
 
 }

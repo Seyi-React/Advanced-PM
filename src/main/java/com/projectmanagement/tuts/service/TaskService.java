@@ -12,6 +12,8 @@ public interface TaskService {
     Task createTask(@Valid TaskCreationDTO taskRequest, Long id) throws Exception;
     List<Task> getProjectTasks(Long projectId) throws Exception;
     Task getTaskById(Long taskId) throws Exception;
+
     void deleteTask(Long taskId) throws Exception;
-    Task updateProject(Long projectId, TaskCreationDTO projectDetails) throws Exception;
+
+    Task updateTask(Long taskId, TaskCreationDTO taskDetails) throws Exception;
 }
