@@ -2,11 +2,9 @@ package com.projectmanagement.tuts.controller;
 
 
 import com.projectmanagement.tuts.DTO.TaskCreationDTO;
-import com.projectmanagement.tuts.DTO.TaskRequest;
 import com.projectmanagement.tuts.Entity.Task;
 import com.projectmanagement.tuts.exception.ProjectNotFoundException;
 import com.projectmanagement.tuts.exception.TaskNotFoundException;
-import com.projectmanagement.tuts.repository.TaskRepository;
 import com.projectmanagement.tuts.service.TaskService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -71,6 +69,23 @@ public class TaskController {
         }
 
         }
+
+
+    @PutMapping("{taskId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Task> updateTask( @PathVariable  Long taskId, @Valid @RequestBody  TaskCreationDTO taskCreationDTO) {
+        try{
+            Task updateTask = taskService.updateTask(taskId,taskCreationDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(updateTask);
+
+        } catch (TaskNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
 
     @DeleteMapping("{taskId}")
     @PreAuthorize("isAuthenticated()")
